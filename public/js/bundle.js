@@ -256,9 +256,7 @@
     }
 
     function injectLanguageControl() {
-        if (document.querySelector('[data-mp-lang-control]')) return;
         var lists = document.querySelectorAll('.option-list');
-        if (!lists.length) return;
         var target = null;
         for (var i = 0; i < lists.length; i++) {
             var sec = lists[i].parentElement;
@@ -266,7 +264,16 @@
             var t = h ? h.textContent : '';
             if (/General|通用|常规/.test(t)) { target = lists[i]; break; }
         }
-        if (!target) target = lists[0];
+        var existing = document.querySelector('[data-mp-lang-control]');
+        if (!target) {
+            // Not on the General panel: drop any control injected on another panel.
+            if (existing && existing.parentElement) existing.parentElement.removeChild(existing);
+            return;
+        }
+        if (existing) {
+            if (existing.parentElement === target) return; // already in the right place
+            if (existing.parentElement) existing.parentElement.removeChild(existing);
+        }
         target.appendChild(buildLanguageControl());
     }
 
@@ -297,6 +304,14 @@
                     if (r.width > 0 && r.height > 0) {
                         nodes[i].click();
                         clearInterval(timer);
+                        // Land on the General subtab where the control lives.
+                        setTimeout(function () {
+                            var subs = document.querySelectorAll('button, [role="tab"]');
+                            for (var k = 0; k < subs.length; k++) {
+                                var st = (subs[k].textContent || '').trim();
+                                if (/^(通用|General)$/.test(st)) { subs[k].click(); break; }
+                            }
+                        }, 250);
                         return;
                     }
                 }
