@@ -4,6 +4,7 @@ import { VueLoaderPlugin } from 'vue-loader';
 import webpack from 'webpack';
 
 import { WasmScriptPlugin } from './wasm-script-webpack-plugin.js';
+import { I18nPlugin } from './i18n/translate-plugin.js'; // i18n layer: upstream-safe overlay
 
 const projectDir = path.dirname(fileURLToPath(import.meta.url));
 const { DefinePlugin } = webpack;
@@ -45,6 +46,7 @@ export default {
         }),
         new VueLoaderPlugin(),
         new WasmScriptPlugin(path.resolve(projectDir, 'tsconfig.json')),
+        new I18nPlugin(), // i18n layer: upstream-safe overlay
     ],
     watchOptions: {
         aggregateTimeout: 300,
