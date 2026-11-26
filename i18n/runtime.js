@@ -28,6 +28,15 @@
     // Regex rules for strings assembled at runtime (exact literals are handled
     // at build time by __MP_T). Only applied in Chinese mode.
     var RULES = [
+        // Guild module leftovers: shop cost/refresh, quest-board header, sell and loot lines.
+        [/^Cost: ([\d.,]+) coins?$/, '消耗：$1 金币'],
+        [/^Refresh: ([\d.,]+)s$/, '刷新：$1 秒'],
+        [/^· Refresh: (.+)$/, '· 刷新：$1'],
+        [/^Guild Rank: (.+)$/, '公会阶位：$1'],
+        [/^Sell for ([\d.,–-]+) coins?$/, '出售价：$1 金币'],
+        [/^or press (.+)$/, '或按 $1'],
+        [/^You received ([\d.,]+) (.+?)\.$/, '你获得了 $1 个 $2。'],
+        [/^You dropped ([\d.,]+) (.+?)\.$/, '你丢失了 $1 个 $2。'],
         [/^You gained (a|\d+) memor(?:y|ies)! \(([^)]*)\)$/, function (m) {
             return '你获得了 ' + (m[1] === 'a' ? '1' : m[1]) + ' 点记忆！（' + m[2] + '）';
         }],
@@ -89,7 +98,7 @@
         [/^Use the (.*) tool$/, '使用$1工具'],
         [/^Cannot perform this task$/, '无法执行此任务'],
         [/^Tier (\d+)\+$/, '第 $1 阶以上'],
-        [/^Tier (\d+)\+ (.+)$/, '第 $1 阶以上 · $2'],
+        [/^Tier (\d+)\+ (.+)$/, '第 $1 阶以上 $2'],
         [/^([\d.,]+) coins · ([\d.,]+) coins \/ (\d+) min$/, '$1 金币 · 每 $3 分钟 $2 金币'],
         [/^100 quindecillion mana is a lot \((\d+)\)$/, '一百万亿亿魔力可真不少（$1）'],
         [/^(奖励：.*) coins$/, '$1 金币'],
@@ -128,6 +137,9 @@
     ];
 
     var ALIASES = {
+        // Build-time translation of the lowercase id "mana" is intentionally disabled:
+        // Vue uses it as a prop/tab identifier. Translate only the visible text here.
+        'mana': '魔力',
         'Save copied to clipboard.': '存档已复制到剪贴板。',
         'Copy your save:': '复制你的存档：',
         'Paste your save:': '粘贴你的存档：',
@@ -152,7 +164,43 @@
         'Rank F': '阶位 F',
         'i am very original': '我超有原创性的',
         'This will permanently reset your game.': '这将永久重置你的游戏进度。',
-        'Are you sure?': '确定吗？'
+        'Are you sure?': '确定吗？',
+        // Guild tab: shop, quest board, inventory and equipment panels.
+        'Guild Rank:': '公会阶位：',
+        'Guild Shop': '公会商店',
+        'Guild Inventory': '公会物品栏',
+        'Quest Board': '任务板',
+        'Empty': '空',
+        'Equipment': '装备',
+        'Set Bonus': '套装加成',
+        'No armor equipped.': '未装备护甲。',
+        'Accept Quest': '接受任务',
+        'Cancel': '取消',
+        'Sell All Materials': '出售全部材料',
+        'Sell Spare Equipment': '出售多余装备',
+        'Sell All Items': '出售全部物品',
+        'Drink All Potions': '饮下全部药水',
+        'Apply to the Guild': '申请加入公会',
+        'Do you wish to apply to the Guild?': '你想申请加入公会吗？',
+        "You've grown strong enough": '你已经足够强大了',
+        'The Guild won\'t let you rank up until you grow stronger..': '在你变得更强之前，公会不允许你升阶……',
+        'Finish your active quest before accepting another.': '接受新任务前，请先完成当前任务。',
+        'Shift+click to use or equip an item. Ctrl+click to sell it.': '按住 Shift 点击可使用或装备物品，按住 Ctrl 点击可出售。',
+        'You are not ready for The Ascension Hall...': '你还没有准备好进入飞升大厅……',
+        'Coming soon to a Mana Paradox near you:tm:': '即将登陆你身边的《魔力悖论》™',
+        'Dismiss quest result': '关闭任务结果',
+        'Guild rank progress': '公会阶位进度',
+        'Drop here': '拖放到此',
+        'Unassign': '取消分配',
+        'No settings available yet.': '暂无可用设置。',
+        'Pause Autocasters': '暂停自动施法者',
+        'Resume Autocasters': '恢复自动施法者',
+        'Guild Autocasters': '公会自动施法者',
+        'Unassigned Casters': '未分配施法者',
+        "Guild's Library": '公会图书馆',
+        'Hold to walk forward': '按住向前走',
+        'Purchased': '已购买',
+        'Locked': '已锁定'
     };
 
     function hasChinese(s) { return /[\u3400-\u9fff]/.test(s); }
